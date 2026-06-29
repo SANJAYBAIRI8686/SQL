@@ -125,42 +125,60 @@ Our performance tuning configurations demonstrate massive resource savings:
 
 ## 5. Local Setup & Ingestion Guide
 
-To deploy the schema and load the dataset locally, follow these steps:
+To deploy the schema, load the dataset, and run validations locally, you can choose either the automated one-click setup or manual step-by-step setup:
 
-### Prerequisites
-*   Ensure **PostgreSQL 13+** is installed on your local system or run via Docker.
-*   (Optional) Python 3 installed if you want to modify and run the synthetic data generator.
-
-### Step 1: Run the Database Container (Optional)
-If running via Docker:
+### Option A: One-Click Automated Setup (Recommended)
+If you have **Docker** installed and running on your macOS or Linux machine, you can set up the entire database (including synthetic data loading, procedures compilation, and query tests) with a single command:
 ```bash
-docker run --name omnishop-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:alpine
+bash scripts/setup.sh
 ```
+This script spawns a transient container, mounts the workspace, runs DDL scripts, loads the 52k dataset, registers the procedures, and executes automated verification checks.
 
-### Step 2: Provision Schema
-Deploy the core schema namespaces and tables:
-```bash
-psql -h localhost -U postgres -d postgres -f schema.sql
-```
+### Option B: Manual Step-by-Step Setup
+If you prefer to configure the database manually:
 
-### Step 3: Populate Dataset
-Ingest the generated e-commerce datasets:
-```bash
-psql -h localhost -U postgres -d postgres -f scripts/load_data.sql
-```
-*(Note: To reload or adjust datasets, execute `python3 scripts/generate_data.py` to regenerate CSVs prior to running the ingestion script).*
+1.  **Prerequisites**:
+    *   Ensure **PostgreSQL 13+** is running locally (or via Docker).
+    *   (Optional) Python 3 installed if you plan to regenerate synthetic CSVs.
 
-### Step 4: Deploy Procedures
-Compile stored automations:
-```bash
-psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_process_order.sql
-psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_manage_customer.sql
-psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_generate_bi_report.sql
-```
+2.  **Start Database Container (if using Docker)**:
+    ```bash
+    docker run --name omnishop-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:alpine
+    ```
+
+3.  **Deploy Schema & Tables**:
+    ```bash
+    psql -h localhost -U postgres -d postgres -f schema.sql
+    ```
+
+4.  **Ingest CSV Dataset**:
+    ```bash
+    psql -h localhost -U postgres -d postgres -f scripts/load_data.sql
+    ```
+    *(Note: To regenerate data with custom parameters, run `python3 scripts/generate_data.py` first).*
+
+5.  **Compile Stored Procedures**:
+    ```bash
+    psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_process_order.sql
+    psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_manage_customer.sql
+    psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_generate_bi_report.sql
+    ```
 
 ---
 
-## 6. Production Deployment Notes (Google Cloud SQL)
+## 6. Continuous Integration (CI/CD Pipeline)
+
+This repository includes a GitHub Actions CI/CD workflow defined in **[`.github/workflows/verify-db.yml`](file:///Users/sanjaykumarbairi/Desktop/Sql%20Project/.github/workflows/verify-db.yml)**. On every push and pull request:
+- A transient PostgreSQL service container is initialized.
+- The `schema.sql` tables and indexes are deployed.
+- The 52,000+ transactional CSV records are ingested.
+- PL/pgSQL procedures are registered.
+- All 35+ portfolio query scripts are run and verified for syntax correctness.
+This guarantees that any schema changes or refactorings maintain complete query compiler safety.
+
+---
+
+## 7. Production Deployment Notes (Google Cloud SQL)
 
 When migrating this schema to Google Cloud SQL (PostgreSQL), execute the following enterprise best practices:
 
