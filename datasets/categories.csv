@@ -1,0 +1,11 @@
+category_id,name,slug,description,parent_category_id
+1,Electronics,electronics,"Consumer electronics, gadgets and tech devices.",
+2,Computers & Tablets,computers-tablets,"Laptops, desktop systems, and tables.",1
+3,Smart Home,smart-home,"Smart plugs, speakers, cameras, and hubs.",1
+4,Apparel,apparel,"Clothing, shoes, and wearable accessories.",
+5,Men's Clothing,mens-clothing,"Men's casualwear, activewear, and suits.",4
+6,Women's Clothing,womens-clothing,"Women's dresses, activewear, and tops.",4
+7,Home & Kitchen,home-kitchen,"Furniture, cookery, and household items.",
+8,Furniture,furniture,"Sofas, dining tables, desks, and bookshelves.",7
+9,Kitchen Appliances,kitchen-appliances,"Toasters, air fryers, coffee makers, and ovens.",7
+10,Sports & Outdoors,sports-outdoors,"Fitness gear, camping equipment, and sports goods.",
