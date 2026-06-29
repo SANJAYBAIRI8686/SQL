@@ -164,7 +164,7 @@ If you prefer to configure the database manually:
     psql -h localhost -U postgres -d postgres -f sql_queries/procedures/proc_generate_bi_report.sql
     ```
 
----
+-----
 
 ## 6. Continuous Integration (CI/CD Pipeline)
 
@@ -176,7 +176,7 @@ This repository includes a GitHub Actions CI/CD workflow defined in **[`.github/
 - All 35+ portfolio query scripts are run and verified for syntax correctness.
 This guarantees that any schema changes or refactorings maintain complete query compiler safety.
 
----
+-----
 
 ## 7. Production Deployment Notes (Google Cloud SQL)
 
